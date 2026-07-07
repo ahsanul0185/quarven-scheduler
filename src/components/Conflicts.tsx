@@ -40,9 +40,9 @@ export default function Conflicts({ conflicts }: ConflictsProps) {
         <h3 className="text-lg font-semibold text-slate-800">Problems</h3>
         <p className="text-sm text-slate-500">Anything that could not be scheduled.</p>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
+      <div className="overflow-auto max-h-[calc(100vh-120px)]">
+        <table className="w-full text-sm border-collapse">
+          <thead className="sticky top-0 z-20 shadow-sm">
             <tr className="bg-[#2C3E50] text-white">
               <th className="px-4 py-3 text-left font-medium">Type</th>
               <th className="px-4 py-3 text-left font-medium">Shift</th>

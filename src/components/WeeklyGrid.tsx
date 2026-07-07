@@ -40,7 +40,7 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
           Employees × days. Each block shows task, floor, time, and break.
         </p>
       </div>
-      <div className="overflow-auto h-[calc(100vh-180px)]">
+      <div className="overflow-auto h-[calc(100vh-120px)]">
         <table className="w-full text-sm border-collapse">
           <thead className="sticky top-0 z-20">
             <tr className="bg-[#2C3E50] text-white">
