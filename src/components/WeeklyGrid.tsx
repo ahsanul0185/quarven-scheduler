@@ -33,22 +33,25 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
-      <div className="p-4 border-b border-slate-200">
+    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+      <div className="p-4 border-b border-slate-200 shrink-0">
         <h3 className="text-lg font-semibold text-slate-800">Weekly Schedule Grid</h3>
         <p className="text-sm text-slate-500">
           Employees × days. Each block shows task, floor, time, and break.
         </p>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
+      <div className="overflow-auto h-[calc(100vh-180px)]">
+        <table className="w-full text-sm border-collapse">
+          <thead className="sticky top-0 z-20">
             <tr className="bg-[#2C3E50] text-white">
-              <th className="px-4 py-3 text-left font-medium sticky left-0 bg-[#2C3E50] z-10">
+              <th className="px-4 py-3 text-left font-medium sticky left-0 bg-[#2C3E50] z-30 min-w-[160px] border-r border-slate-600">
                 Employee
               </th>
               {DAYS_OF_WEEK.map((day) => (
-                <th key={day} className="px-3 py-3 text-center font-medium min-w-[140px]">
+                <th
+                  key={day}
+                  className="px-3 py-3 text-center font-medium min-w-[150px] bg-[#2C3E50]"
+                >
                   {DAY_LABELS[day]}
                 </th>
               ))}
@@ -57,12 +60,13 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
           <tbody>
             {employees.map((emp, rowIndex) => {
               const empAssignments = grid.get(emp.employee_id)!
+              const rowBg = rowIndex % 2 === 1 ? 'bg-[#F2F2F2]' : 'bg-white'
+
               return (
-                <tr
-                  key={emp.employee_id}
-                  className={rowIndex % 2 === 1 ? 'bg-[#F2F2F2]' : 'bg-white'}
-                >
-                  <td className="px-4 py-3 font-medium text-slate-800 sticky left-0 bg-inherit z-10 border-r border-slate-200">
+                <tr key={emp.employee_id} className={rowBg}>
+                  <td
+                    className={`px-4 py-3 font-medium text-slate-800 sticky left-0 z-10 border-r border-slate-200 min-w-[160px] ${rowBg}`}
+                  >
                     {emp.employee_name}
                     <div className="text-xs text-slate-500 font-normal capitalize">
                       {emp.role} • {emp.site}
@@ -79,13 +83,15 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
                     }
 
                     return (
-                      <td key={day} className="px-2 py-2 align-top">
+                      <td key={day} className="px-2 py-2 align-top min-w-[150px]">
                         {Array.from(byShift.entries()).map(([shiftId, shiftAssignments]) => {
-                          const roleClass = ROLE_COLORS[emp.role] || 'bg-slate-100 text-slate-800 border-slate-300'
+                          const roleClass =
+                            ROLE_COLORS[emp.role] || 'bg-slate-100 text-slate-800 border-slate-300'
                           const tasks = shiftAssignments.map((a) => a.task_name).join(', ')
                           const floors = [...new Set(shiftAssignments.map((a) => a.floor))].join(', ')
                           const a = shiftAssignments[0]
-                          const breakText = a.break_minutes > 0 ? `Break: ${a.break_minutes}min` : 'No break'
+                          const breakText =
+                            a.break_minutes > 0 ? `Break: ${a.break_minutes}min` : 'No break'
 
                           return (
                             <div
