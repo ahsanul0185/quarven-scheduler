@@ -57,6 +57,7 @@ export default function App() {
       setShifts(data.shifts)
       setTasks(data.tasks)
       setConfig(data.config)
+      setResult(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load sample files')
     } finally {
@@ -109,6 +110,16 @@ export default function App() {
     if (!result) return
     exportReportHtml(result, employees)
   }
+
+  const handleClear = useCallback(() => {
+    setEmployees([])
+    setShifts([])
+    setTasks([])
+    setConfig(null)
+    setResult(null)
+    setError(null)
+    setActiveView('overview')
+  }, [])
 
   const renderView = () => {
     if (!result) {
@@ -177,6 +188,7 @@ export default function App() {
             onFilesSelected={handleFilesSelected}
             onLoadSample={handleLoadSample}
             onGenerate={handleGenerate}
+            onClear={handleClear}
             isGenerating={isGenerating}
             hasData={employees.length > 0 && shifts.length > 0 && tasks.length > 0}
           />
