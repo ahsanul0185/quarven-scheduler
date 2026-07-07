@@ -5,6 +5,7 @@ import type {
   SchedulerConfig,
   Assignment,
   Conflict,
+  ConflictType,
   ScheduleResult,
   ScheduleStats,
   DayOfWeek,
@@ -21,6 +22,13 @@ interface EmployeeState {
   weeklyHours: number
   workedDays: DayOfWeek[]
   lastShiftEnd: { day: DayOfWeek; time: string } | null
+}
+
+interface CandidateCheck {
+  employee_id: string
+  available: boolean
+  conflict_type?: ConflictType
+  detail?: string
 }
 
 export function generateSchedule(
@@ -61,7 +69,7 @@ export function generateSchedule(
     // Step 1: assign each task its required headcount
     for (const task of shiftTasks) {
       const assigned: string[] = []
-      const candidates = getCandidatesForTask(
+      const candidateChecks = getCandidateChecksForTask(
         task,
         shift,
         employees,
@@ -71,8 +79,19 @@ export function generateSchedule(
         shiftDuration
       )
 
-      for (const candidateId of candidates) {
+      let firstBlock: CandidateCheck | null = null
+
+      for (const check of candidateChecks) {
         if (assigned.length >= task.required_headcount) break
+
+        if (!check.available) {
+          if (check.conflict_type && !firstBlock) {
+            firstBlock = check
+          }
+          continue
+        }
+
+        const candidateId = check.employee_id
         if (assignedEmployeeIds.has(candidateId)) {
           assigned.push(candidateId)
           continue
@@ -87,20 +106,21 @@ export function generateSchedule(
       taskAssignments.set(task.task_id, assigned)
 
       if (assigned.length < task.required_headcount) {
-        conflicts.push({
-          conflict_type: 'understaffed',
-          shift_id: shift.shift_id,
-          site: shift.site,
-          role: task.required_role,
-          day: shift.day,
-          detail: `Task ${task.task_id} on ${task.floor} has ${assigned.length} assigned staff but requires a team of ${task.required_headcount}.`,
-        })
+        const conflict = buildTaskConflict(
+          task,
+          shift,
+          assigned.length,
+          firstBlock,
+          employees
+        )
+        conflicts.push(conflict)
       }
     }
 
-    // Step 2: ensure shift minimum staffing (add general staff of shift role if needed)
+    // Step 2: check shift minimum staffing after task assignments
     if (assignedEmployeeIds.size < shift.min_staff) {
-      const generalCandidates = getGeneralCandidates(
+      // Collect reasons from any matching employee not already on shift
+      const candidateChecks = getGeneralCandidateChecks(
         shift,
         employees,
         employeeStates,
@@ -109,24 +129,21 @@ export function generateSchedule(
         shiftDuration
       )
 
-      for (const candidateId of generalCandidates) {
-        if (assignedEmployeeIds.size >= shift.min_staff) break
-        if (assignedEmployeeIds.has(candidateId)) continue
-
-        assignedEmployeeIds.add(candidateId)
-        updateEmployeeState(candidateId, shift, shiftDuration, employeeStates)
+      let firstBlock: CandidateCheck | null = null
+      for (const check of candidateChecks) {
+        if (check.conflict_type && !firstBlock) {
+          firstBlock = check
+          break
+        }
       }
 
-      if (assignedEmployeeIds.size < shift.min_staff) {
-        conflicts.push({
-          conflict_type: 'understaffed',
-          shift_id: shift.shift_id,
-          site: shift.site,
-          role: shift.role,
-          day: shift.day,
-          detail: `Shift ${shift.shift_id} has ${assignedEmployeeIds.size} assigned staff but requires a minimum of ${shift.min_staff}.`,
-        })
-      }
+      const conflict = buildShiftConflict(
+        shift,
+        assignedEmployeeIds.size,
+        firstBlock,
+        employees
+      )
+      conflicts.push(conflict)
     }
 
     // Step 3: create Assignment records for each task based on who ended up assigned
@@ -163,7 +180,7 @@ export function generateSchedule(
   }
 }
 
-function getCandidatesForTask(
+function getCandidateChecksForTask(
   task: Task,
   shift: Shift,
   employees: Employee[],
@@ -171,59 +188,89 @@ function getCandidatesForTask(
   alreadyAssigned: Set<string>,
   config: SchedulerConfig,
   shiftDuration: number
-): string[] {
-  const candidates = employees
+): CandidateCheck[] {
+  // Employees already assigned to this shift are always valid for another task in the same shift
+  const alreadyOnShift = employees
+    .filter(
+      (emp) =>
+        alreadyAssigned.has(emp.employee_id) &&
+        emp.site === shift.site &&
+        emp.role === task.required_role &&
+        (!task.required_skill || emp.skills.includes(task.required_skill))
+    )
+    .map((emp) => ({ employee_id: emp.employee_id, available: true }))
+    .sort((a, b) => a.employee_id.localeCompare(b.employee_id))
+
+  const notOnShift = employees
     .filter((emp) => {
       if (emp.site !== shift.site) return false
       if (emp.role !== task.required_role) return false
       if (task.required_skill && !emp.skills.includes(task.required_skill)) return false
-      return isEmployeeAvailableForShift(emp, shift, employeeStates, config, shiftDuration)
+      return !alreadyAssigned.has(emp.employee_id)
     })
-    .map((emp) => emp.employee_id)
-    .sort()
+    .map((emp) =>
+      checkEmployeeAvailability(emp, shift, employeeStates, config, shiftDuration)
+    )
+    .sort((a, b) => a.employee_id.localeCompare(b.employee_id))
 
-  // Prioritize employees already assigned to this shift (can cover multiple tasks)
-  const alreadyOnShift = candidates.filter((id) => alreadyAssigned.has(id))
-  const notOnShift = candidates.filter((id) => !alreadyAssigned.has(id))
+  // Prefer new employees when we are still below min_staff to spread work across the team
+  if (alreadyAssigned.size < shift.min_staff) {
+    return [...notOnShift, ...alreadyOnShift]
+  }
+
   return [...alreadyOnShift, ...notOnShift]
 }
 
-function getGeneralCandidates(
+function getGeneralCandidateChecks(
   shift: Shift,
   employees: Employee[],
   employeeStates: Map<string, EmployeeState>,
   alreadyAssigned: Set<string>,
   config: SchedulerConfig,
   shiftDuration: number
-): string[] {
+): CandidateCheck[] {
   return employees
     .filter((emp) => {
       if (emp.site !== shift.site) return false
       if (emp.role !== shift.role) return false
-      if (alreadyAssigned.has(emp.employee_id)) return false
-      return isEmployeeAvailableForShift(emp, shift, employeeStates, config, shiftDuration)
+      return !alreadyAssigned.has(emp.employee_id)
     })
-    .map((emp) => emp.employee_id)
-    .sort()
+    .map((emp) =>
+      checkEmployeeAvailability(emp, shift, employeeStates, config, shiftDuration)
+    )
+    .sort((a, b) => a.employee_id.localeCompare(b.employee_id))
 }
 
-function isEmployeeAvailableForShift(
+function checkEmployeeAvailability(
   emp: Employee,
   shift: Shift,
   employeeStates: Map<string, EmployeeState>,
   config: SchedulerConfig,
   shiftDuration: number
-): boolean {
+): CandidateCheck {
   const availability = emp.availability[shift.day]
-  if (availability === 'unavailable') return false
-  if (availability === 'partial' && shiftDuration > config.partial_day_max_hours) return false
+  if (availability === 'unavailable') {
+    return {
+      employee_id: emp.employee_id,
+      available: false,
+    }
+  }
+
+  if (availability === 'partial' && shiftDuration > config.partial_day_max_hours) {
+    return {
+      employee_id: emp.employee_id,
+      available: false,
+    }
+  }
 
   const state = employeeStates.get(emp.employee_id)
-  if (!state) return false
-
-  // Weekly hours
-  if (state.weeklyHours + shiftDuration > config.max_weekly_hours) {
-    return false
+  if (!state) {
+    return {
+      employee_id: emp.employee_id,
+      available: false,
+      conflict_type: 'understaffed',
+      detail: `Employee ${emp.employee_id} state not found.`,
+    }
   }
 
   // Rest between shifts
@@ -235,17 +282,103 @@ function isEmployeeAvailableForShift(
       shift.day
     )
     if (restHours < config.min_rest_hours) {
-      return false
+      return {
+        employee_id: emp.employee_id,
+        available: false,
+        conflict_type: 'rest_violation',
+        detail: `Employee ${emp.employee_id} has less than ${config.min_rest_hours} hours rest between the end of their previous shift and the start of shift ${shift.shift_id}.`,
+      }
+    }
+  }
+
+  // Weekly hours
+  if (state.weeklyHours + shiftDuration > config.max_weekly_hours) {
+    const projected = Math.round((state.weeklyHours + shiftDuration) * 10) / 10
+    return {
+      employee_id: emp.employee_id,
+      available: false,
+      conflict_type: 'weekly_hours_exceeded',
+      detail: `Assigning employee ${emp.employee_id} to shift ${shift.shift_id} would bring their weekly total to ${projected} hours which exceeds the ${config.max_weekly_hours} hour limit.`,
     }
   }
 
   // Consecutive days
   const projectedDays = [...state.workedDays, shift.day]
   if (countConsecutiveDays(projectedDays) > config.max_consecutive_days) {
-    return false
+    return {
+      employee_id: emp.employee_id,
+      available: false,
+      conflict_type: 'consecutive_days_exceeded',
+      detail: `Employee ${emp.employee_id} has already been assigned shifts on ${config.max_consecutive_days} consecutive days and cannot be assigned to shift ${shift.shift_id} on day ${projectedDays.length}.`,
+    }
   }
 
-  return true
+  return { employee_id: emp.employee_id, available: true }
+}
+
+function buildTaskConflict(
+  task: Task,
+  shift: Shift,
+  assignedCount: number,
+  firstBlock: CandidateCheck | null,
+  employees: Employee[]
+): Conflict {
+  if (firstBlock?.conflict_type && firstBlock.detail) {
+    const emp = employees.find((e) => e.employee_id === firstBlock.employee_id)
+    const detail = firstBlock.detail.replace(
+      firstBlock.employee_id,
+      emp?.employee_name || firstBlock.employee_id
+    )
+    return {
+      conflict_type: firstBlock.conflict_type,
+      shift_id: shift.shift_id,
+      site: shift.site,
+      role: task.required_role,
+      day: shift.day,
+      detail,
+    }
+  }
+
+  return {
+    conflict_type: 'understaffed',
+    shift_id: shift.shift_id,
+    site: shift.site,
+    role: task.required_role,
+    day: shift.day,
+    detail: `Task ${task.task_id} on ${task.floor} has ${assignedCount} assigned staff but requires a team of ${task.required_headcount}.`,
+  }
+}
+
+function buildShiftConflict(
+  shift: Shift,
+  assignedCount: number,
+  firstBlock: CandidateCheck | null,
+  employees: Employee[]
+): Conflict {
+  if (firstBlock?.conflict_type && firstBlock.detail) {
+    const emp = employees.find((e) => e.employee_id === firstBlock.employee_id)
+    const detail = firstBlock.detail.replace(
+      firstBlock.employee_id,
+      emp?.employee_name || firstBlock.employee_id
+    )
+    return {
+      conflict_type: firstBlock.conflict_type,
+      shift_id: shift.shift_id,
+      site: shift.site,
+      role: shift.role,
+      day: shift.day,
+      detail,
+    }
+  }
+
+  return {
+    conflict_type: 'understaffed',
+    shift_id: shift.shift_id,
+    site: shift.site,
+    role: shift.role,
+    day: shift.day,
+    detail: `Shift ${shift.shift_id} has ${assignedCount} assigned staff but requires a minimum of ${shift.min_staff}.`,
+  }
 }
 
 function updateEmployeeState(
@@ -269,12 +402,6 @@ function computeStats(
   assignments: Assignment[],
   conflicts: Conflict[]
 ): ScheduleStats {
-  const assignmentsByShift = new Map<string, number>()
-  for (const a of assignments) {
-    assignmentsByShift.set(a.shift_id, (assignmentsByShift.get(a.shift_id) || 0) + 1)
-  }
-
-  // A shift is "staffed" if it has at least min_staff unique employees
   const staffedShifts = new Set<string>()
   const understaffedShifts = new Set<string>()
 
@@ -289,11 +416,7 @@ function computeStats(
     }
   }
 
-  const totalAssignedHours = assignments.reduce(
-    (sum, a) => sum + a.duration_hours,
-    0
-  )
-
+  const totalAssignedHours = assignments.reduce((sum, a) => sum + a.duration_hours, 0)
   const coveragePercent = shifts.length > 0 ? (staffedShifts.size / shifts.length) * 100 : 0
 
   return {
