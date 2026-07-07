@@ -12,9 +12,11 @@ import type {
 } from '../types'
 import {
   shiftDurationHours,
+  shiftCrossesMidnight,
   sortShifts,
   countConsecutiveDays,
   getBreakTime,
+  getShiftEndDay,
   hoursBetween,
 } from './utils'
 
@@ -59,6 +61,8 @@ export function generateSchedule(
   const conflicts: Conflict[] = []
   const employeeLookup = new Map(employees.map((e) => [e.employee_id, e]))
   const assignmentIdCounter = { value: 1 }
+
+  const shiftsWithTaskConflict = new Set<string>()
 
   for (const shift of sortedShifts) {
     const shiftTasks = tasksByShift.get(shift.shift_id) || []
@@ -114,11 +118,13 @@ export function generateSchedule(
           employees
         )
         conflicts.push(conflict)
+        shiftsWithTaskConflict.add(shift.shift_id)
       }
     }
 
     // Step 2: check shift minimum staffing after task assignments
-    if (assignedEmployeeIds.size < shift.min_staff) {
+    // Only add a shift-level conflict if task-level conflicts did not already report the issue.
+    if (!shiftsWithTaskConflict.has(shift.shift_id) && assignedEmployeeIds.size < shift.min_staff) {
       // Collect reasons from any matching employee not already on shift
       const candidateChecks = getGeneralCandidateChecks(
         shift,
@@ -394,7 +400,16 @@ function updateEmployeeState(
   if (!state.workedDays.includes(shift.day)) {
     state.workedDays.push(shift.day)
   }
-  state.lastShiftEnd = { day: shift.day, time: shift.end_time }
+
+  // Overnight shifts also touch the next calendar day
+  if (shiftCrossesMidnight(shift)) {
+    const endDay = getShiftEndDay(shift)
+    if (!state.workedDays.includes(endDay)) {
+      state.workedDays.push(endDay)
+    }
+  }
+
+  state.lastShiftEnd = { day: getShiftEndDay(shift), time: shift.end_time }
 }
 
 function computeStats(

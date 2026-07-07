@@ -1,5 +1,10 @@
 import type { Employee, Shift, Task, SchedulerConfig } from '../types'
-import { parseEmployeesCsv, parseShiftsCsv, parseTasksCsv, detectAndParseConfig } from './parser'
+import {
+  detectAndParseEmployees,
+  detectAndParseShifts,
+  detectAndParseTasks,
+  detectAndParseConfig,
+} from './parser'
 
 export interface LoadedFiles {
   employees: Employee[]
@@ -44,9 +49,9 @@ export async function loadFromFiles(inputs: {
   const configText = inputs.config ? await readFileAsText(inputs.config) : '{}'
 
   return {
-    employees: parseEmployeesCsv(employeesText),
-    shifts: parseShiftsCsv(shiftsText),
-    tasks: parseTasksCsv(tasksText),
+    employees: detectAndParseEmployees(employeesText),
+    shifts: detectAndParseShifts(shiftsText),
+    tasks: detectAndParseTasks(tasksText),
     config: detectAndParseConfig(configText),
   }
 }
@@ -60,9 +65,9 @@ export async function loadSampleFiles(): Promise<LoadedFiles> {
   ])
 
   return {
-    employees: parseEmployeesCsv(employeesText),
-    shifts: parseShiftsCsv(shiftsText),
-    tasks: parseTasksCsv(tasksText),
+    employees: detectAndParseEmployees(employeesText),
+    shifts: detectAndParseShifts(shiftsText),
+    tasks: detectAndParseTasks(tasksText),
     config: detectAndParseConfig(configText),
   }
 }

@@ -46,6 +46,8 @@ npm run preview
 
 ## Input files
 
+All files can be provided as **CSV** or **JSON**. The app detects the format automatically from the file content.
+
 ### `employees.csv`
 
 | Column | Description |

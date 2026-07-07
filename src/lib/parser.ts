@@ -216,3 +216,168 @@ export function detectAndParseConfig(content: string): SchedulerConfig {
   }
   return parseConfigCsv(content)
 }
+
+
+// ---------------------------------------------------------------------------
+// JSON parsers
+// ---------------------------------------------------------------------------
+
+function parseSkills(value: unknown): string[] {
+  if (Array.isArray(value)) {
+    return value
+      .map((s) => String(s).trim().toLowerCase())
+      .filter(Boolean)
+  }
+  if (typeof value === 'string') {
+    return value
+      .split(';')
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean)
+  }
+  return []
+}
+
+export function parseEmployeesJson(json: string): Employee[] {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(json)
+  } catch {
+    throw new Error('Employees file is not valid JSON')
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('Employees JSON must be an array of employee objects')
+  }
+
+  return parsed.map((row: unknown, index) => {
+    if (!row || typeof row !== 'object') {
+      throw new Error(`Invalid employee object at index ${index}`)
+    }
+    const record = row as Record<string, unknown>
+
+    if (!record.employee_id) {
+      throw new Error(`Missing employee_id at index ${index}`)
+    }
+
+    const availability: Record<DayOfWeek, AvailabilityStatus> = {
+      monday: 'unavailable',
+      tuesday: 'unavailable',
+      wednesday: 'unavailable',
+      thursday: 'unavailable',
+      friday: 'unavailable',
+      saturday: 'unavailable',
+      sunday: 'unavailable',
+    }
+
+    for (const day of DAYS_OF_WEEK) {
+      const value = record[day]
+      if (value !== undefined && value !== '') {
+        availability[day] = assertAvailability(String(value))
+      }
+    }
+
+    return {
+      employee_id: String(record.employee_id),
+      employee_name: record.employee_name ? String(record.employee_name) : String(record.employee_id),
+      site: record.site ? String(record.site) : '',
+      role: assertRole(String(record.role)),
+      skills: parseSkills(record.skills),
+      availability,
+    }
+  })
+}
+
+export function parseShiftsJson(json: string): Shift[] {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(json)
+  } catch {
+    throw new Error('Shifts file is not valid JSON')
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('Shifts JSON must be an array of shift objects')
+  }
+
+  return parsed.map((row: unknown, index) => {
+    if (!row || typeof row !== 'object') {
+      throw new Error(`Invalid shift object at index ${index}`)
+    }
+    const record = row as Record<string, unknown>
+
+    if (!record.shift_id) {
+      throw new Error(`Missing shift_id at index ${index}`)
+    }
+
+    return {
+      shift_id: String(record.shift_id),
+      site: record.site ? String(record.site) : '',
+      role: assertRole(String(record.role)),
+      day: assertDay(String(record.day)),
+      start_time: String(record.start_time),
+      end_time: String(record.end_time),
+      min_staff: parseNumber(String(record.min_staff), 'min_staff'),
+      max_staff: parseNumber(String(record.max_staff), 'max_staff'),
+    }
+  })
+}
+
+export function parseTasksJson(json: string): Task[] {
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(json)
+  } catch {
+    throw new Error('Tasks file is not valid JSON')
+  }
+
+  if (!Array.isArray(parsed)) {
+    throw new Error('Tasks JSON must be an array of task objects')
+  }
+
+  return parsed.map((row: unknown, index) => {
+    if (!row || typeof row !== 'object') {
+      throw new Error(`Invalid task object at index ${index}`)
+    }
+    const record = row as Record<string, unknown>
+
+    if (!record.task_id) {
+      throw new Error(`Missing task_id at index ${index}`)
+    }
+
+    const skill = record.required_skill ? String(record.required_skill).toLowerCase().trim() : ''
+
+    return {
+      task_id: String(record.task_id),
+      shift_id: String(record.shift_id),
+      task_name: record.task_name ? String(record.task_name) : '',
+      floor: record.floor ? String(record.floor) : '',
+      required_role: assertRole(String(record.required_role)),
+      required_skill: skill || null,
+      required_headcount: parseNumber(String(record.required_headcount), 'required_headcount'),
+    }
+  })
+}
+
+export function detectAndParseEmployees(content: string): Employee[] {
+  const trimmed = content.trim()
+  if (trimmed.startsWith('[')) {
+    return parseEmployeesJson(content)
+  }
+  return parseEmployeesCsv(content)
+}
+
+export function detectAndParseShifts(content: string): Shift[] {
+  const trimmed = content.trim()
+  if (trimmed.startsWith('[')) {
+    return parseShiftsJson(content)
+  }
+  return parseShiftsCsv(content)
+}
+
+export function detectAndParseTasks(content: string): Task[] {
+  const trimmed = content.trim()
+  if (trimmed.startsWith('[')) {
+    return parseTasksJson(content)
+  }
+  return parseTasksCsv(content)
+}

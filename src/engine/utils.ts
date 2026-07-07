@@ -21,8 +21,22 @@ export function shiftDurationHours(shift: Shift): number {
   return (end - start) / 60
 }
 
+export function shiftCrossesMidnight(shift: Shift): boolean {
+  return timeToMinutes(shift.end_time) < timeToMinutes(shift.start_time)
+}
+
 export function dayIndex(day: DayOfWeek): number {
   return DAYS_OF_WEEK.indexOf(day)
+}
+
+export function dayName(index: number): DayOfWeek {
+  const wrapped = ((index % 7) + 7) % 7
+  return DAYS_OF_WEEK[wrapped]
+}
+
+export function getShiftEndDay(shift: Shift): DayOfWeek {
+  if (!shiftCrossesMidnight(shift)) return shift.day
+  return dayName(dayIndex(shift.day) + 1)
 }
 
 export function addMinutesToTime(time: string, minutes: number): string {
@@ -51,7 +65,12 @@ export function getBreakTime(
   }
 }
 
-export function hoursBetween(endTime: string, endDay: DayOfWeek, startTime: string, startDay: DayOfWeek): number {
+export function hoursBetween(
+  endTime: string,
+  endDay: DayOfWeek,
+  startTime: string,
+  startDay: DayOfWeek
+): number {
   const endMinutes = timeToMinutes(endTime) + dayIndex(endDay) * 24 * 60
   const startMinutes = timeToMinutes(startTime) + dayIndex(startDay) * 24 * 60
   return (startMinutes - endMinutes) / 60
