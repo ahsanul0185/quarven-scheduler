@@ -1,0 +1,97 @@
+import { useRef, useState } from 'react'
+
+interface FileUploaderProps {
+  onFilesSelected: (files: {
+    employees?: File
+    shifts?: File
+    tasks?: File
+    config?: File
+  }) => void
+  onLoadSample: () => void
+  onGenerate: () => void
+  isGenerating: boolean
+  hasData: boolean
+}
+
+interface FileState {
+  employees?: File
+  shifts?: File
+  tasks?: File
+  config?: File
+}
+
+export default function FileUploader({
+  onFilesSelected,
+  onLoadSample,
+  onGenerate,
+  isGenerating,
+  hasData,
+}: FileUploaderProps) {
+  const [files, setFiles] = useState<FileState>({})
+  const refs = {
+    employees: useRef<HTMLInputElement>(null),
+    shifts: useRef<HTMLInputElement>(null),
+    tasks: useRef<HTMLInputElement>(null),
+    config: useRef<HTMLInputElement>(null),
+  }
+
+  const handleFileChange = (key: keyof FileState, file: File | undefined) => {
+    const updated = { ...files, [key]: file }
+    setFiles(updated)
+    onFilesSelected(updated)
+  }
+
+  const handleLoadSample = () => {
+    setFiles({})
+    onLoadSample()
+  }
+
+  const labels: Record<keyof FileState, string> = {
+    employees: 'Employees CSV',
+    shifts: 'Shifts CSV',
+    tasks: 'Tasks CSV',
+    config: 'Config (JSON/CSV)',
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+      <h2 className="text-lg font-semibold text-slate-800 mb-4">Upload files</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        {(Object.keys(labels) as Array<keyof FileState>).map((key) => (
+          <div key={key} className="flex flex-col gap-1">
+            <label className="text-sm font-medium text-slate-600">{labels[key]}</label>
+            <input
+              ref={refs[key]}
+              type="file"
+              accept={key === 'config' ? '.json,.csv' : '.csv'}
+              onChange={(e) => handleFileChange(key, e.target.files?.[0])}
+              className="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-3 file:rounded file:border-0 file:text-sm file:font-medium file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200"
+            />
+            {files[key] && (
+              <span className="text-xs text-emerald-600 truncate">{files[key]!.name}</span>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          onClick={onGenerate}
+          disabled={isGenerating}
+          className="px-5 py-2.5 bg-[#2C3E50] text-white rounded-md font-medium hover:bg-[#1e2b38] disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {isGenerating ? 'Generating...' : 'Generate Schedule'}
+        </button>
+        <button
+          onClick={handleLoadSample}
+          disabled={isGenerating}
+          className="px-5 py-2.5 bg-white text-[#2C3E50] border border-[#2C3E50] rounded-md font-medium hover:bg-slate-50 disabled:opacity-60"
+        >
+          Load sample files
+        </button>
+      </div>
+      {hasData && (
+        <p className="mt-3 text-sm text-emerald-600">Files loaded. Ready to generate.</p>
+      )}
+    </div>
+  )
+}
