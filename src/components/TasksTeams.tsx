@@ -22,7 +22,7 @@ export default function TasksTeams({ assignments, tasks, employees, shifts }: Ta
   const sortedTasks = [...tasks].sort((a, b) => a.task_id.localeCompare(b.task_id))
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
       <div className="p-4 border-b border-slate-200">
         <h3 className="text-lg font-semibold text-slate-800">Tasks & Teams</h3>
         <p className="text-sm text-slate-500">Each task, its floor, and assigned team members.</p>
@@ -30,7 +30,7 @@ export default function TasksTeams({ assignments, tasks, employees, shifts }: Ta
       <div className="overflow-auto max-h-[calc(100vh-120px)]">
         <table className="w-full text-sm border-collapse">
           <thead className="sticky top-0 z-20 shadow-sm">
-            <tr className="bg-[#2C3E50] text-white">
+            <tr className="bg-[#0f172a] text-white">
               <th className="px-4 py-3 text-left font-medium">Task</th>
               <th className="px-4 py-3 text-left font-medium">Shift</th>
               <th className="px-4 py-3 text-left font-medium">Floor</th>

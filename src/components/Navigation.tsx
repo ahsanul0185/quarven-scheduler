@@ -16,15 +16,15 @@ const items: { id: View; label: string }[] = [
 
 export default function Navigation({ active, onChange }: NavigationProps) {
   return (
-    <nav className="bg-white rounded-lg shadow-sm border border-slate-200 p-2">
+    <nav className="bg-white rounded-xl border border-slate-200 p-2">
       <ul className="space-y-1">
         {items.map((item) => (
           <li key={item.id}>
             <button
               onClick={() => onChange(item.id)}
-              className={`w-full text-left px-4 py-2.5 rounded-md text-sm font-medium transition-colors ${
+              className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 active === item.id
-                  ? 'bg-[#2C3E50] text-white'
+                  ? 'bg-[#0f172a] text-white'
                   : 'text-slate-600 hover:bg-slate-100'
               }`}
             >

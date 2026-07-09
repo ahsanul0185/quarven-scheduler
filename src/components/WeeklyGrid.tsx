@@ -33,7 +33,7 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden flex flex-col">
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
       <div className="p-4 border-b border-slate-200 shrink-0">
         <h3 className="text-lg font-semibold text-slate-800">Weekly Schedule Grid</h3>
         <p className="text-sm text-slate-500">
@@ -43,14 +43,14 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
       <div className="overflow-auto h-[calc(100vh-120px)]">
         <table className="w-full text-sm border-collapse">
           <thead className="sticky top-0 z-20">
-            <tr className="bg-[#2C3E50] text-white">
-              <th className="px-4 py-3 text-left font-medium sticky left-0 bg-[#2C3E50] z-30 min-w-[160px] border-r border-slate-600">
+            <tr className="bg-[#0f172a] text-white">
+              <th className="px-4 py-3 text-left font-medium sticky left-0 bg-[#0f172a] z-30 min-w-[160px] border-r border-slate-600">
                 Employee
               </th>
               {DAYS_OF_WEEK.map((day) => (
                 <th
                   key={day}
-                  className="px-3 py-3 text-center font-medium min-w-[150px] bg-[#2C3E50]"
+                  className="px-3 py-3 text-center font-medium min-w-[150px] bg-[#0f172a]"
                 >
                   {DAY_LABELS[day]}
                 </th>

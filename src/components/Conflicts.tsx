@@ -15,7 +15,7 @@ const TYPE_STYLES: Record<string, string> = {
 export default function Conflicts({ conflicts }: ConflictsProps) {
   if (conflicts.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+      <div className="bg-white rounded-xl border border-slate-200 p-6">
         <h3 className="text-lg font-semibold text-slate-800 mb-1">Problems</h3>
         <p className="text-emerald-600 font-medium">No conflicts found. Schedule is clean.</p>
       </div>
@@ -35,7 +35,7 @@ export default function Conflicts({ conflicts }: ConflictsProps) {
   })
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
       <div className="p-4 border-b border-slate-200">
         <h3 className="text-lg font-semibold text-slate-800">Problems</h3>
         <p className="text-sm text-slate-500">Anything that could not be scheduled.</p>
@@ -43,7 +43,7 @@ export default function Conflicts({ conflicts }: ConflictsProps) {
       <div className="overflow-auto max-h-[calc(100vh-120px)]">
         <table className="w-full text-sm border-collapse">
           <thead className="sticky top-0 z-20 shadow-sm">
-            <tr className="bg-[#2C3E50] text-white">
+            <tr className="bg-[#0f172a] text-white">
               <th className="px-4 py-3 text-left font-medium">Type</th>
               <th className="px-4 py-3 text-left font-medium">Shift</th>
               <th className="px-4 py-3 text-left font-medium">Site / Role</th>

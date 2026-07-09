@@ -20,7 +20,7 @@ export default function Breaks({ assignments, employees }: BreaksProps) {
   const sortedEmployeeIds = Array.from(byEmployee.keys()).sort()
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
       <div className="p-4 border-b border-slate-200">
         <h3 className="text-lg font-semibold text-slate-800">Breaks</h3>
         <p className="text-sm text-slate-500">Each person's automatic break times.</p>
@@ -28,7 +28,7 @@ export default function Breaks({ assignments, employees }: BreaksProps) {
       <div className="overflow-auto max-h-[calc(100vh-120px)]">
         <table className="w-full text-sm border-collapse">
           <thead className="sticky top-0 z-20 shadow-sm">
-            <tr className="bg-[#2C3E50] text-white">
+            <tr className="bg-[#0f172a] text-white">
               <th className="px-4 py-3 text-left font-medium">Employee</th>
               <th className="px-4 py-3 text-left font-medium">Day</th>
               <th className="px-4 py-3 text-left font-medium">Shift</th>

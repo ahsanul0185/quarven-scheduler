@@ -124,7 +124,7 @@ export default function App() {
   const renderView = () => {
     if (!result) {
       return (
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8 text-center text-slate-500">
+        <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500">
           Upload files and click Generate Schedule to see results.
         </div>
       )
@@ -149,8 +149,8 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-[#2C3E50] text-white shadow-sm">
+    <div className="min-h-screen bg-slate-100">
+      <header className="bg-[#0f172a] text-white">
         <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <h1 className="text-xl font-bold">Quarven Scheduler</h1>
@@ -159,19 +159,19 @@ export default function App() {
                 <>
                   <button
                     onClick={handleExportSchedule}
-                    className="px-3 py-1.5 text-sm bg-white/10 hover:bg-white/20 rounded"
+                    className="px-3 py-1.5 text-sm bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                   >
                     Export CSV
                   </button>
                   <button
                     onClick={handleExportProblems}
-                    className="px-3 py-1.5 text-sm bg-white/10 hover:bg-white/20 rounded"
+                    className="px-3 py-1.5 text-sm bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                   >
                     Export Problems
                   </button>
                   <button
                     onClick={handleExportReport}
-                    className="px-3 py-1.5 text-sm bg-white/10 hover:bg-white/20 rounded"
+                    className="px-3 py-1.5 text-sm bg-white/10 hover:bg-white/20 rounded-md transition-colors"
                   >
                     Export Report
                   </button>
@@ -195,7 +195,7 @@ export default function App() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-lg text-rose-700">
+          <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700">
             {error}
           </div>
         )}

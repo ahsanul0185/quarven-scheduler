@@ -9,7 +9,7 @@ export default function KPIs({ stats }: KPIsProps) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+          <div key={i} className="bg-white rounded-xl border border-slate-200 p-4">
             <div className="text-sm text-slate-500">-</div>
             <div className="text-2xl font-bold text-slate-800 mt-1">-</div>
           </div>
@@ -31,7 +31,7 @@ export default function KPIs({ stats }: KPIsProps) {
       {items.map((item) => (
         <div
           key={item.label}
-          className="bg-white rounded-lg shadow-sm border border-slate-200 p-4"
+          className="bg-white rounded-xl border border-slate-200 p-4"
         >
           <div className="text-sm text-slate-500">{item.label}</div>
           <div

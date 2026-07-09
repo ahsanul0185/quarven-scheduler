@@ -72,7 +72,7 @@ export default function FileUploader({
   const anyFileSelected = Object.values(files).some(Boolean)
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+    <div className="bg-white rounded-xl border border-slate-200 p-6">
       <h2 className="text-lg font-semibold text-slate-800 mb-4">Upload files</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
         {(Object.keys(labels) as Array<keyof FileState>).map((key) => (
@@ -95,21 +95,21 @@ export default function FileUploader({
         <button
           onClick={onGenerate}
           disabled={isGenerating}
-          className="px-5 py-2.5 bg-[#2C3E50] text-white rounded-md font-medium hover:bg-[#1e2b38] disabled:opacity-60 disabled:cursor-not-allowed"
+          className="px-5 py-2.5 bg-[#0f172a] text-white rounded-lg font-medium hover:bg-[#1e293b] disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
         >
           {isGenerating ? 'Generating...' : 'Generate Schedule'}
         </button>
         <button
           onClick={handleLoadSample}
           disabled={isGenerating}
-          className="px-5 py-2.5 bg-white text-[#2C3E50] border border-[#2C3E50] rounded-md font-medium hover:bg-slate-50 disabled:opacity-60"
+          className="px-5 py-2.5 bg-white text-[#0f172a] border border-[#0f172a] rounded-lg font-medium hover:bg-slate-50 disabled:opacity-60 transition-colors"
         >
           Load sample files
         </button>
         <button
           onClick={handleClear}
           disabled={isGenerating || (!anyFileSelected && !hasData)}
-          className="px-5 py-2.5 bg-white text-rose-600 border border-rose-200 rounded-md font-medium hover:bg-rose-50 disabled:opacity-40"
+          className="px-5 py-2.5 bg-white text-rose-600 border border-rose-200 rounded-lg font-medium hover:bg-rose-50 disabled:opacity-40 transition-colors"
         >
           Clear
         </button>

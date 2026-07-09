@@ -31,7 +31,7 @@ export default function FloorView({ assignments, employees }: FloorViewProps) {
   const floors = Array.from(byFloor.keys()).sort()
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+    <div className="bg-white rounded-xl border border-slate-200 p-4">
       <h3 className="text-lg font-semibold text-slate-800 mb-1">Floor View</h3>
       <p className="text-sm text-slate-500 mb-4">Who is on each floor, by day.</p>
       <div className="space-y-4">
@@ -39,7 +39,7 @@ export default function FloorView({ assignments, employees }: FloorViewProps) {
           const days = byFloor.get(floor)!
           return (
             <div key={floor} className="border border-slate-200 rounded-md overflow-hidden">
-              <div className="bg-[#2C3E50] text-white px-4 py-2 font-medium">{floor}</div>
+              <div className="bg-[#0f172a] text-white px-4 py-2 font-medium">{floor}</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 p-3">
                 {Array.from(days.entries()).map(([day, entries]) => (
                   <div key={day} className="bg-slate-50 rounded p-3">

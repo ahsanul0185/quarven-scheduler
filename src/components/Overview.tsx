@@ -20,7 +20,7 @@ interface OverviewProps {
 export default function Overview({ stats, conflicts }: OverviewProps) {
   if (!stats) {
     return (
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8 text-center text-slate-500">
+      <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500">
         Generate a schedule to see the overview.
       </div>
     )
@@ -48,7 +48,7 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
       <KPIs stats={stats} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
           <h4 className="text-base font-semibold text-slate-800 mb-4">Shift Coverage</h4>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -73,7 +73,7 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
           <h4 className="text-base font-semibold text-slate-800 mb-4">Conflicts by Type</h4>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -88,7 +88,7 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-4">
         <h4 className="text-base font-semibold text-slate-800 mb-2">Summary</h4>
         <p className="text-sm text-slate-600">
           The schedule contains <strong>{stats.total_shifts}</strong> shifts.{' '}
