@@ -1,3 +1,12 @@
+import {
+  LayoutGrid,
+  CalendarDays,
+  Building2,
+  Users,
+  Coffee,
+  AlertTriangle,
+} from 'lucide-react'
+
 type View = 'overview' | 'weekly' | 'floor' | 'tasks' | 'breaks' | 'conflicts'
 
 interface NavigationProps {
@@ -5,33 +14,37 @@ interface NavigationProps {
   onChange: (view: View) => void
 }
 
-const items: { id: View; label: string }[] = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'weekly', label: 'Weekly Grid' },
-  { id: 'floor', label: 'Floor View' },
-  { id: 'tasks', label: 'Tasks & Teams' },
-  { id: 'breaks', label: 'Breaks' },
-  { id: 'conflicts', label: 'Conflicts' },
+const items: { id: View; label: string; icon: React.ElementType }[] = [
+  { id: 'overview', label: 'Overview', icon: LayoutGrid },
+  { id: 'weekly', label: 'Weekly Grid', icon: CalendarDays },
+  { id: 'floor', label: 'Floor View', icon: Building2 },
+  { id: 'tasks', label: 'Tasks & Teams', icon: Users },
+  { id: 'breaks', label: 'Breaks', icon: Coffee },
+  { id: 'conflicts', label: 'Problems', icon: AlertTriangle },
 ]
 
 export default function Navigation({ active, onChange }: NavigationProps) {
   return (
-    <nav className="bg-white rounded-2xl border border-slate-200 p-2">
+    <nav>
       <ul className="space-y-1">
-        {items.map((item) => (
-          <li key={item.id}>
-            <button
-              onClick={() => onChange(item.id)}
-              className={`w-full text-left px-4 py-3 rounded-xl text-sm font-light transition-all duration-200 ${
-                active === item.id
-                  ? 'bg-[#2C3E50] text-white'
-                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
-              }`}
-            >
-              {item.label}
-            </button>
-          </li>
-        ))}
+        {items.map((item) => {
+          const Icon = item.icon
+          return (
+            <li key={item.id}>
+              <button
+                onClick={() => onChange(item.id)}
+                className={`w-full flex items-center gap-3 text-left px-3 py-2.5 rounded-lg text-sm font-light transition-all duration-200 ${
+                  active === item.id
+                    ? 'bg-white text-[#1e293b] font-normal'
+                    : 'text-slate-400 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {item.label}
+              </button>
+            </li>
+          )
+        })}
       </ul>
     </nav>
   )

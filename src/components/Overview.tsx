@@ -11,6 +11,7 @@ import {
 } from 'recharts'
 import type { ScheduleStats, Conflict } from '../types'
 import KPIs from './KPIs'
+import { BarChart3, PieChart as PieChartIcon } from 'lucide-react'
 
 interface OverviewProps {
   stats: ScheduleStats | null
@@ -21,7 +22,7 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
   if (!stats) {
     return (
       <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
-        <div className="text-5xl mb-4 opacity-30">📊</div>
+        <PieChartIcon className="w-12 h-12 mx-auto mb-4 opacity-30" />
         <p className="text-base font-light">Generate a schedule to see the overview.</p>
       </div>
     )
@@ -50,7 +51,10 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <h4 className="text-base font-light text-slate-600 mb-6">Shift Coverage</h4>
+          <div className="flex items-center gap-2 mb-6">
+            <PieChartIcon className="w-4 h-4 text-slate-400" />
+            <h4 className="text-base font-light text-slate-600">Shift Coverage</h4>
+          </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -75,7 +79,10 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
         </div>
 
         <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <h4 className="text-base font-light text-slate-600 mb-6">Conflicts by Type</h4>
+          <div className="flex items-center gap-2 mb-6">
+            <BarChart3 className="w-4 h-4 text-slate-400" />
+            <h4 className="text-base font-light text-slate-600">Conflicts by Type</h4>
+          </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={conflictData}>

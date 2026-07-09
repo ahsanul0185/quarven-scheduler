@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { Upload, Check, X, Users, Clock, ClipboardList, Settings } from 'lucide-react'
 
 interface FileUploaderProps {
   onFilesSelected: (files: {
@@ -12,6 +13,9 @@ interface FileUploaderProps {
   onClear: () => void
   isGenerating: boolean
   hasData: boolean
+  employeesCount: number
+  shiftsCount: number
+  tasksCount: number
 }
 
 interface FileState {
@@ -23,11 +27,11 @@ interface FileState {
 
 export default function FileUploader({
   onFilesSelected,
-  onLoadSample,
-  onGenerate,
   onClear,
-  isGenerating,
   hasData,
+  employeesCount,
+  shiftsCount,
+  tasksCount,
 }: FileUploaderProps) {
   const [files, setFiles] = useState<FileState>({})
   const refs = {
@@ -43,80 +47,88 @@ export default function FileUploader({
     onFilesSelected(updated)
   }
 
-  const handleLoadSample = () => {
-    clearInputs()
-    onLoadSample()
-  }
-
   const handleClear = () => {
-    clearInputs()
-    onClear()
-  }
-
-  const clearInputs = () => {
     setFiles({})
     Object.values(refs).forEach((ref) => {
       if (ref.current) {
         ref.current.value = ''
       }
     })
+    onClear()
   }
 
-  const labels: Record<keyof FileState, string> = {
-    employees: 'Employees (CSV or JSON)',
-    shifts: 'Shifts (CSV or JSON)',
-    tasks: 'Tasks (CSV or JSON)',
-    config: 'Config (JSON or CSV)',
+  const labels: Record<keyof FileState, { name: string; icon: React.ElementType }> = {
+    employees: { name: 'Employees', icon: Users },
+    shifts: { name: 'Shifts', icon: Clock },
+    tasks: { name: 'Tasks', icon: ClipboardList },
+    config: { name: 'Config', icon: Settings },
   }
 
   const anyFileSelected = Object.values(files).some(Boolean)
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-8">
-      <h2 className="text-lg text-slate-600 mb-6">Upload files</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-6">
-        {(Object.keys(labels) as Array<keyof FileState>).map((key) => (
-          <div key={key} className="flex flex-col gap-2">
-            <label className="text-sm font-light text-slate-400">{labels[key]}</label>
-            <input
-              ref={refs[key]}
-              type="file"
-              accept=".csv,.json"
-              onChange={(e) => handleFileChange(key, e.target.files?.[0])}
-              className="block w-full text-sm font-light text-slate-500 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-light file:bg-[#f2f4f6] file:text-[#2C3E50] hover:file:bg-slate-200 transition-colors"
-            />
-            {files[key] && (
-              <span className="text-xs font-light text-[#27ae60] truncate">{files[key]!.name}</span>
-            )}
-          </div>
-        ))}
+    <div className="bg-white rounded-2xl border border-slate-200 p-6">
+      <div className="flex items-start justify-between mb-5">
+        <div>
+          <h3 className="text-sm font-normal text-slate-800">Data sources</h3>
+          <p className="text-xs font-light text-slate-400 mt-0.5">CSV or JSON files</p>
+        </div>
+        <div className="text-xs font-light text-slate-400">
+          {employeesCount} employees · {shiftsCount} shifts · {tasksCount} tasks
+        </div>
       </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <button
-          onClick={onGenerate}
-          disabled={isGenerating}
-          className="px-6 py-2.5 bg-[#2C3E50] text-white rounded-full font-light hover:bg-[#34495e] disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-        >
-          {isGenerating ? 'Generating...' : 'Generate Schedule'}
-        </button>
-        <button
-          onClick={handleLoadSample}
-          disabled={isGenerating}
-          className="px-6 py-2.5 bg-white text-[#2C3E50] border border-slate-200 rounded-full font-light hover:bg-[#f2f4f6] hover:border-slate-300 disabled:opacity-40 transition-all duration-200"
-        >
-          Load sample files
-        </button>
-        <button
-          onClick={handleClear}
-          disabled={isGenerating || (!anyFileSelected && !hasData)}
-          className="px-6 py-2.5 bg-white text-[#e74c3c] border border-rose-100 rounded-full font-light hover:bg-rose-50 disabled:opacity-30 transition-all duration-200"
-        >
-          Clear
-        </button>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
+        {(Object.keys(labels) as Array<keyof FileState>).map((key) => {
+          const Icon = labels[key].icon
+          return (
+            <div key={key}>
+              <input
+                ref={refs[key]}
+                type="file"
+                accept=".csv,.json"
+                onChange={(e) => handleFileChange(key, e.target.files?.[0])}
+                className="hidden"
+                id={`file-${key}`}
+              />
+              <label
+                htmlFor={`file-${key}`}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl border border-dashed cursor-pointer transition-all duration-200 ${
+                  files[key]
+                    ? 'border-[#27ae60] bg-[#eafaf1] text-[#239b56]'
+                    : 'border-slate-300 hover:border-slate-400 hover:bg-slate-50 text-slate-500'
+                }`}
+              >
+                {files[key] ? (
+                  <Check className="w-5 h-5 shrink-0" />
+                ) : (
+                  <Upload className="w-5 h-5 shrink-0" />
+                )}
+                <div>
+                  <div className="text-sm font-light">{labels[key].name}</div>
+                  {files[key] && (
+                    <div className="text-[10px] font-light truncate max-w-[140px]">{files[key]!.name}</div>
+                  )}
+                </div>
+              </label>
+            </div>
+          )
+        })}
       </div>
-      {hasData && (
-        <p className="mt-4 text-sm font-light text-[#27ae60]">Files loaded. Ready to generate.</p>
-      )}
+
+      <div className="flex items-center gap-3">
+        {(anyFileSelected || hasData) && (
+          <button
+            onClick={handleClear}
+            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-light text-rose-500 hover:bg-rose-50 rounded-lg transition-all duration-200"
+          >
+            <X className="w-4 h-4" /> Clear all
+          </button>
+        )}
+        {hasData && (
+          <span className="text-xs font-light text-[#27ae60]">Files loaded. Ready to generate.</span>
+        )}
+      </div>
     </div>
   )
 }
