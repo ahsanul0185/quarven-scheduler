@@ -11,7 +11,6 @@ export default function TasksTeams({ assignments, tasks, employees, shifts }: Ta
   const employeeMap = new Map(employees.map((e) => [e.employee_id, e]))
   const shiftMap = new Map(shifts.map((s) => [s.shift_id, s]))
 
-  // Group assignments by task_id
   const byTask = new Map<string, Assignment[]>()
   for (const a of assignments) {
     const list = byTask.get(a.task_id) || []
@@ -23,18 +22,18 @@ export default function TasksTeams({ assignments, tasks, employees, shifts }: Ta
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-      <div className="p-6 border-b border-slate-200">
-        <h3 className="text-lg text-slate-700">Tasks & Teams</h3>
+      <div className="p-4 sm:p-6 border-b border-slate-200">
+        <h3 className="text-lg font-light text-slate-700">Tasks & Teams</h3>
         <p className="text-sm font-light text-slate-400 mt-1">Each task, its floor, and assigned team members.</p>
       </div>
-      <div className="overflow-auto max-h-[calc(100vh-120px)]">
-        <table className="w-full text-sm border-collapse">
+      <div className="overflow-auto">
+        <table className="w-full text-sm border-collapse min-w-[600px]">
           <thead className="sticky top-0 z-20">
             <tr className="bg-[#2C3E50] text-white">
-              <th className="px-6 py-4 text-left font-light">Task</th>
-              <th className="px-6 py-4 text-left font-light">Shift</th>
-              <th className="px-6 py-4 text-left font-light">Floor</th>
-              <th className="px-6 py-4 text-left font-light">Team</th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left font-light">Task</th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left font-light">Shift</th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left font-light">Floor</th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left font-light">Team</th>
             </tr>
           </thead>
           <tbody>
@@ -48,14 +47,14 @@ export default function TasksTeams({ assignments, tasks, employees, shifts }: Ta
                   key={task.task_id}
                   className={`${index % 2 === 1 ? 'bg-[#f2f4f6]' : 'bg-white'} transition-colors hover:bg-slate-50`}
                 >
-                  <td className="px-6 py-4">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4">
                     <div className="font-light text-slate-700">{task.task_name}</div>
                     <div className="text-xs font-light text-slate-400 mt-1">
                       Need {task.required_headcount} •{' '}
                       {task.required_skill || 'no skill required'}
                     </div>
                   </td>
-                  <td className="px-6 py-4 text-slate-600 font-light">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 text-slate-600 font-light">
                     {shift ? (
                       <>
                         {shift.day} {shift.start_time}–{shift.end_time}
@@ -67,21 +66,21 @@ export default function TasksTeams({ assignments, tasks, employees, shifts }: Ta
                       task.shift_id
                     )}
                   </td>
-                  <td className="px-6 py-4 text-slate-600 font-light">{task.floor}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 sm:px-6 py-3 sm:py-4 text-slate-600 font-light">{task.floor}</td>
+                  <td className="px-4 sm:px-6 py-3 sm:py-4">
                     {team.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2">
                         {team.map((name, i) => (
                           <span
                             key={i}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-light bg-[#f2f4f6] text-slate-600"
+                            className="inline-flex items-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-light bg-[#f2f4f6] text-slate-600"
                           >
                             {name}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-light bg-rose-50 text-[#e74c3c]">Unstaffed</span>
+                      <span className="inline-flex items-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-full text-xs font-light bg-rose-50 text-[#e74c3c]">Unstaffed</span>
                     )}
                   </td>
                 </tr>

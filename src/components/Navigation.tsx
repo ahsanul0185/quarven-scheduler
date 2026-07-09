@@ -39,8 +39,8 @@ export default function Navigation({ active, onChange }: NavigationProps) {
                     : 'text-slate-400 hover:text-white hover:bg-white/5'
                 }`}
               >
-                <Icon className="w-4 h-4" />
-                {item.label}
+                <Icon className="w-4 h-4 shrink-0" />
+                <span className="truncate">{item.label}</span>
               </button>
             </li>
           )

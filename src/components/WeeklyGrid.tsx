@@ -15,7 +15,6 @@ const ROLE_COLORS: Record<string, string> = {
 }
 
 export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) {
-  // Group assignments by employee_id and day
   const grid = new Map<string, Map<DayOfWeek, Assignment[]>>()
 
   for (const emp of employees) {
@@ -34,23 +33,23 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col">
-      <div className="p-6 border-b border-slate-200 shrink-0">
-        <h3 className="text-lg text-slate-700">Weekly Schedule Grid</h3>
+      <div className="p-4 sm:p-6 border-b border-slate-200 shrink-0">
+        <h3 className="text-lg font-light text-slate-700">Weekly Schedule Grid</h3>
         <p className="text-sm font-light text-slate-400 mt-1">
           Employees × days. Each block shows task, floor, time, and break.
         </p>
       </div>
-      <div className="overflow-auto h-[calc(100vh-120px)]">
-        <table className="w-full text-sm border-collapse">
+      <div className="overflow-auto">
+        <table className="w-full text-sm border-collapse min-w-[800px]">
           <thead className="sticky top-0 z-20">
             <tr className="bg-[#2C3E50] text-white">
-              <th className="px-6 py-4 text-left font-light sticky left-0 bg-[#2C3E50] z-30 min-w-[180px] border-r border-slate-600">
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left font-light sticky left-0 bg-[#2C3E50] z-30 min-w-[160px] sm:min-w-[180px] border-r border-slate-600">
                 Employee
               </th>
               {DAYS_OF_WEEK.map((day) => (
                 <th
                   key={day}
-                  className="px-4 py-4 text-center font-light min-w-[150px] bg-[#2C3E50]"
+                  className="px-3 sm:px-4 py-3 sm:py-4 text-center font-light min-w-[120px] sm:min-w-[150px] bg-[#2C3E50]"
                 >
                   {DAY_LABELS[day]}
                 </th>
@@ -65,7 +64,7 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
               return (
                 <tr key={emp.employee_id} className={`${rowBg} transition-colors hover:bg-slate-50`}>
                   <td
-                    className={`px-6 py-4 font-light text-slate-700 sticky left-0 z-10 border-r border-slate-200 min-w-[180px] ${rowBg}`}
+                    className={`px-4 sm:px-6 py-3 sm:py-4 font-light text-slate-700 sticky left-0 z-10 border-r border-slate-200 min-w-[160px] sm:min-w-[180px] ${rowBg}`}
                   >
                     {emp.employee_name}
                     <div className="text-xs font-light text-slate-400 capitalize">
@@ -74,7 +73,6 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
                   </td>
                   {DAYS_OF_WEEK.map((day) => {
                     const dayAssignments = empAssignments.get(day) || []
-                    // Merge assignments that share the same shift
                     const byShift = new Map<string, Assignment[]>()
                     for (const a of dayAssignments) {
                       const list = byShift.get(a.shift_id) || []
@@ -83,7 +81,7 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
                     }
 
                     return (
-                      <td key={day} className="px-3 py-3 align-top min-w-[150px]">
+                      <td key={day} className="px-2 sm:px-3 py-2 sm:py-3 align-top min-w-[120px] sm:min-w-[150px]">
                         {Array.from(byShift.entries()).map(([shiftId, shiftAssignments]) => {
                           const roleClass =
                             ROLE_COLORS[emp.role] || 'bg-[#f2f4f6] text-slate-600 border-slate-200'
@@ -96,7 +94,7 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
                           return (
                             <div
                               key={shiftId}
-                              className={`mb-2 rounded-xl border p-3 text-xs font-light ${roleClass}`}
+                              className={`mb-2 rounded-xl border p-2 sm:p-3 text-xs font-light ${roleClass}`}
                             >
                               <div className="font-normal truncate">{tasks}</div>
                               <div className="truncate opacity-80">{floors}</div>

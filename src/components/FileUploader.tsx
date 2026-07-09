@@ -67,8 +67,8 @@ export default function FileUploader({
   const anyFileSelected = Object.values(files).some(Boolean)
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-6">
-      <div className="flex items-start justify-between mb-5">
+    <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6">
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-4 sm:mb-5">
         <div>
           <h3 className="text-sm font-normal text-slate-800">Data sources</h3>
           <p className="text-xs font-light text-slate-400 mt-0.5">CSV or JSON files</p>
@@ -78,10 +78,8 @@ export default function FileUploader({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
-        {(Object.keys(labels) as Array<keyof FileState>).map((key) => {
-          const Icon = labels[key].icon
-          return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4 sm:mb-5">
+        {(Object.keys(labels) as Array<keyof FileState>).map((key) => (
             <div key={key}>
               <input
                 ref={refs[key]}
@@ -104,19 +102,18 @@ export default function FileUploader({
                 ) : (
                   <Upload className="w-5 h-5 shrink-0" />
                 )}
-                <div>
+                <div className="min-w-0">
                   <div className="text-sm font-light">{labels[key].name}</div>
                   {files[key] && (
-                    <div className="text-[10px] font-light truncate max-w-[140px]">{files[key]!.name}</div>
+                    <div className="text-[10px] font-light truncate">{files[key]!.name}</div>
                   )}
                 </div>
               </label>
             </div>
-          )
-        })}
+          ))}
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         {(anyFileSelected || hasData) && (
           <button
             onClick={handleClear}

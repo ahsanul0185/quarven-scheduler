@@ -8,7 +8,6 @@ interface BreaksProps {
 export default function Breaks({ assignments, employees }: BreaksProps) {
   const employeeMap = new Map(employees.map((e) => [e.employee_id, e]))
 
-  // Group by employee, then by shift
   const byEmployee = new Map<string, Assignment[]>()
   for (const a of assignments) {
     if (a.break_minutes === 0) continue
@@ -21,19 +20,19 @@ export default function Breaks({ assignments, employees }: BreaksProps) {
 
   return (
     <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
-      <div className="p-6 border-b border-slate-200">
-        <h3 className="text-lg text-slate-700">Breaks</h3>
+      <div className="p-4 sm:p-6 border-b border-slate-200">
+        <h3 className="text-lg font-light text-slate-700">Breaks</h3>
         <p className="text-sm font-light text-slate-400 mt-1">Each person's automatic break times.</p>
       </div>
-      <div className="overflow-auto max-h-[calc(100vh-120px)]">
-        <table className="w-full text-sm border-collapse">
+      <div className="overflow-auto">
+        <table className="w-full text-sm border-collapse min-w-[500px]">
           <thead className="sticky top-0 z-20">
             <tr className="bg-[#2C3E50] text-white">
-              <th className="px-6 py-4 text-left font-light">Employee</th>
-              <th className="px-6 py-4 text-left font-light">Day</th>
-              <th className="px-6 py-4 text-left font-light">Shift</th>
-              <th className="px-6 py-4 text-left font-light">Break</th>
-              <th className="px-6 py-4 text-left font-light">Duration</th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left font-light">Employee</th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left font-light">Day</th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left font-light">Shift</th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left font-light">Break</th>
+              <th className="px-4 sm:px-6 py-3 sm:py-4 text-left font-light">Duration</th>
             </tr>
           </thead>
           <tbody>
@@ -54,17 +53,17 @@ export default function Breaks({ assignments, employees }: BreaksProps) {
                     key={`${empId}-${a.assignment_id}`}
                     className={`${rowIndex % 2 === 1 ? 'bg-[#f2f4f6]' : 'bg-white'} transition-colors hover:bg-slate-50`}
                   >
-                    <td className="px-6 py-4 font-light text-slate-700">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 font-light text-slate-700">
                       {emp?.employee_name || empId}
                     </td>
-                    <td className="px-6 py-4 text-slate-600 font-light capitalize">{a.day}</td>
-                    <td className="px-6 py-4 text-slate-600 font-light">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-slate-600 font-light capitalize">{a.day}</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-slate-600 font-light">
                       {a.start_time}–{a.end_time}
                     </td>
-                    <td className="px-6 py-4 text-slate-600 font-light">
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-slate-600 font-light">
                       {breakStart && breakEnd ? `${breakStart}–${breakEnd}` : '-'}
                     </td>
-                    <td className="px-6 py-4 text-slate-600 font-light">{a.break_minutes} min</td>
+                    <td className="px-4 sm:px-6 py-3 sm:py-4 text-slate-600 font-light">{a.break_minutes} min</td>
                   </tr>
                 )
               })

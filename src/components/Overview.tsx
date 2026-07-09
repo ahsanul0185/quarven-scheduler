@@ -21,9 +21,9 @@ interface OverviewProps {
 export default function Overview({ stats, conflicts }: OverviewProps) {
   if (!stats) {
     return (
-      <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
-        <PieChartIcon className="w-12 h-12 mx-auto mb-4 opacity-30" />
-        <p className="text-base font-light">Generate a schedule to see the overview.</p>
+      <div className="bg-white rounded-2xl border border-slate-200 p-8 sm:p-12 text-center text-slate-400">
+        <PieChartIcon className="w-10 h-10 sm:w-12 sm:h-12 mx-auto mb-4 opacity-30" />
+        <p className="text-sm sm:text-base font-light">Generate a schedule to see the overview.</p>
       </div>
     )
   }
@@ -46,16 +46,16 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
   }))
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8">
       <KPIs stats={stats} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <div className="flex items-center gap-2 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6">
+          <div className="flex items-center gap-2 mb-4 sm:mb-6">
             <PieChartIcon className="w-4 h-4 text-slate-400" />
             <h4 className="text-base font-light text-slate-600">Shift Coverage</h4>
           </div>
-          <div className="h-64">
+          <div className="h-56 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -78,12 +78,12 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-6">
-          <div className="flex items-center gap-2 mb-6">
+        <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6">
+          <div className="flex items-center gap-2 mb-4 sm:mb-6">
             <BarChart3 className="w-4 h-4 text-slate-400" />
             <h4 className="text-base font-light text-slate-600">Conflicts by Type</h4>
           </div>
-          <div className="h-64">
+          <div className="h-56 sm:h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={conflictData}>
                 <XAxis dataKey="name" tick={{ fontSize: 12, fontWeight: 300 }} interval={0} />
@@ -96,7 +96,7 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6">
         <h4 className="text-base font-light text-slate-600 mb-3">Summary</h4>
         <p className="text-sm font-light text-slate-500 leading-relaxed">
           The schedule contains <span className="font-normal text-slate-700">{stats.total_shifts}</span> shifts.{' '}
