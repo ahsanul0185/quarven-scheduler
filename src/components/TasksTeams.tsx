@@ -22,19 +22,19 @@ export default function TasksTeams({ assignments, tasks, employees, shifts }: Ta
   const sortedTasks = [...tasks].sort((a, b) => a.task_id.localeCompare(b.task_id))
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-      <div className="p-4 border-b border-slate-200">
-        <h3 className="text-lg font-semibold text-slate-800">Tasks & Teams</h3>
-        <p className="text-sm text-slate-500">Each task, its floor, and assigned team members.</p>
+    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+      <div className="p-6 border-b border-slate-200">
+        <h3 className="text-lg text-slate-700">Tasks & Teams</h3>
+        <p className="text-sm font-light text-slate-400 mt-1">Each task, its floor, and assigned team members.</p>
       </div>
       <div className="overflow-auto max-h-[calc(100vh-120px)]">
         <table className="w-full text-sm border-collapse">
-          <thead className="sticky top-0 z-20 shadow-sm">
-            <tr className="bg-[#0f172a] text-white">
-              <th className="px-4 py-3 text-left font-medium">Task</th>
-              <th className="px-4 py-3 text-left font-medium">Shift</th>
-              <th className="px-4 py-3 text-left font-medium">Floor</th>
-              <th className="px-4 py-3 text-left font-medium">Team</th>
+          <thead className="sticky top-0 z-20">
+            <tr className="bg-[#2C3E50] text-white">
+              <th className="px-6 py-4 text-left font-light">Task</th>
+              <th className="px-6 py-4 text-left font-light">Shift</th>
+              <th className="px-6 py-4 text-left font-light">Floor</th>
+              <th className="px-6 py-4 text-left font-light">Team</th>
             </tr>
           </thead>
           <tbody>
@@ -46,20 +46,20 @@ export default function TasksTeams({ assignments, tasks, employees, shifts }: Ta
               return (
                 <tr
                   key={task.task_id}
-                  className={index % 2 === 1 ? 'bg-[#F2F2F2]' : 'bg-white'}
+                  className={`${index % 2 === 1 ? 'bg-[#f2f4f6]' : 'bg-white'} transition-colors hover:bg-slate-50`}
                 >
-                  <td className="px-4 py-3">
-                    <div className="font-medium text-slate-800">{task.task_name}</div>
-                    <div className="text-xs text-slate-500">
+                  <td className="px-6 py-4">
+                    <div className="font-light text-slate-700">{task.task_name}</div>
+                    <div className="text-xs font-light text-slate-400 mt-1">
                       Need {task.required_headcount} •{' '}
                       {task.required_skill || 'no skill required'}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-slate-700">
+                  <td className="px-6 py-4 text-slate-600 font-light">
                     {shift ? (
                       <>
                         {shift.day} {shift.start_time}–{shift.end_time}
-                        <div className="text-xs text-slate-500">
+                        <div className="text-xs font-light text-slate-400 mt-1">
                           {shift.site} • {shift.role}
                         </div>
                       </>
@@ -67,21 +67,21 @@ export default function TasksTeams({ assignments, tasks, employees, shifts }: Ta
                       task.shift_id
                     )}
                   </td>
-                  <td className="px-4 py-3 text-slate-700">{task.floor}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-6 py-4 text-slate-600 font-light">{task.floor}</td>
+                  <td className="px-6 py-4">
                     {team.length > 0 ? (
-                      <div className="flex flex-wrap gap-1">
+                      <div className="flex flex-wrap gap-2">
                         {team.map((name, i) => (
                           <span
                             key={i}
-                            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700"
+                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-light bg-[#f2f4f6] text-slate-600"
                           >
                             {name}
                           </span>
                         ))}
                       </div>
                     ) : (
-                      <span className="text-rose-600 text-xs font-medium">Unstaffed</span>
+                      <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-light bg-rose-50 text-[#e74c3c]">Unstaffed</span>
                     )}
                   </td>
                 </tr>

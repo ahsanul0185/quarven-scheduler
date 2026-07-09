@@ -9,9 +9,9 @@ export default function KPIs({ stats }: KPIsProps) {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="bg-white rounded-xl border border-slate-200 p-4">
-            <div className="text-sm text-slate-500">-</div>
-            <div className="text-2xl font-bold text-slate-800 mt-1">-</div>
+          <div key={i} className="bg-white rounded-2xl border border-slate-200 p-5">
+            <div className="text-sm font-light text-slate-400">-</div>
+            <div className="text-3xl font-extralight text-slate-300 mt-2">-</div>
           </div>
         ))}
       </div>
@@ -31,12 +31,12 @@ export default function KPIs({ stats }: KPIsProps) {
       {items.map((item) => (
         <div
           key={item.label}
-          className="bg-white rounded-xl border border-slate-200 p-4"
+          className="bg-white rounded-2xl border border-slate-200 p-5 transition-all duration-200 hover:border-slate-300"
         >
-          <div className="text-sm text-slate-500">{item.label}</div>
+          <div className="text-sm font-light text-slate-400">{item.label}</div>
           <div
-            className={`text-2xl font-bold mt-1 ${
-              item.alert ? 'text-rose-600' : 'text-slate-800'
+            className={`text-3xl font-extralight mt-2 ${
+              item.alert ? 'text-[#e74c3c]' : 'text-[#2C3E50]'
             }`}
           >
             {item.value}

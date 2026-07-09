@@ -20,8 +20,9 @@ interface OverviewProps {
 export default function Overview({ stats, conflicts }: OverviewProps) {
   if (!stats) {
     return (
-      <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500">
-        Generate a schedule to see the overview.
+      <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
+        <div className="text-5xl mb-4 opacity-30">📊</div>
+        <p className="text-base font-light">Generate a schedule to see the overview.</p>
       </div>
     )
   }
@@ -31,7 +32,7 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
     { name: 'Understaffed', value: stats.understaffed_shifts },
   ]
 
-  const COLORS = ['#10b981', '#f43f5e']
+  const COLORS = ['#27ae60', '#e74c3c']
 
   const conflictCounts = conflicts.reduce((acc, c) => {
     acc[c.conflict_type] = (acc[c.conflict_type] || 0) + 1
@@ -44,12 +45,12 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
   }))
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <KPIs stats={stats} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <h4 className="text-base font-semibold text-slate-800 mb-4">Shift Coverage</h4>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+          <h4 className="text-base font-light text-slate-600 mb-6">Shift Coverage</h4>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -73,31 +74,31 @@ export default function Overview({ stats, conflicts }: OverviewProps) {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
-          <h4 className="text-base font-semibold text-slate-800 mb-4">Conflicts by Type</h4>
+        <div className="bg-white rounded-2xl border border-slate-200 p-6">
+          <h4 className="text-base font-light text-slate-600 mb-6">Conflicts by Type</h4>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={conflictData}>
-                <XAxis dataKey="name" tick={{ fontSize: 12 }} interval={0} />
-                <YAxis allowDecimals={false} />
+                <XAxis dataKey="name" tick={{ fontSize: 12, fontWeight: 300 }} interval={0} />
+                <YAxis allowDecimals={false} tick={{ fontWeight: 300 }} />
                 <Tooltip />
-                <Bar dataKey="count" fill="#f43f5e" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="count" fill="#e74c3c" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-slate-200 p-4">
-        <h4 className="text-base font-semibold text-slate-800 mb-2">Summary</h4>
-        <p className="text-sm text-slate-600">
-          The schedule contains <strong>{stats.total_shifts}</strong> shifts.{' '}
-          <strong>{stats.staffed_shifts}</strong> are fully staffed and{' '}
-          <strong>{stats.understaffed_shifts}</strong> are below minimum staffing. Total assigned
-          hours: <strong>{stats.total_assigned_hours}</strong>.{' '}
+      <div className="bg-white rounded-2xl border border-slate-200 p-6">
+        <h4 className="text-base font-light text-slate-600 mb-3">Summary</h4>
+        <p className="text-sm font-light text-slate-500 leading-relaxed">
+          The schedule contains <span className="font-normal text-slate-700">{stats.total_shifts}</span> shifts.{' '}
+          <span className="font-normal text-slate-700">{stats.staffed_shifts}</span> are fully staffed and{' '}
+          <span className="font-normal text-slate-700">{stats.understaffed_shifts}</span> are below minimum staffing. Total assigned
+          hours: <span className="font-normal text-slate-700">{stats.total_assigned_hours}</span>.{' '}
           {stats.total_conflicts > 0 ? (
             <>
-              There are <strong>{stats.total_conflicts}</strong> problems to review.
+              There are <span className="font-normal text-rose-600">{stats.total_conflicts}</span> problems to review.
             </>
           ) : (
             'There are no problems to review.'

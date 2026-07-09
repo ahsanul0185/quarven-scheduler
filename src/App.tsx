@@ -124,8 +124,9 @@ export default function App() {
   const renderView = () => {
     if (!result) {
       return (
-        <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500">
-          Upload files and click Generate Schedule to see results.
+        <div className="bg-white rounded-2xl border border-slate-200 p-12 text-center text-slate-400">
+          <div className="text-5xl mb-4 opacity-30">📋</div>
+          <p className="text-base font-light">Upload files and click Generate Schedule to see results.</p>
         </div>
       )
     }
@@ -149,29 +150,29 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <header className="bg-[#0f172a] text-white">
-        <div className="w-full px-4 sm:px-6 lg:px-8 py-4">
+    <div className="min-h-screen bg-[#eef2f5]">
+      <header className="bg-[#2C3E50] text-white">
+        <div className="w-full px-6 sm:px-8 lg:px-10 py-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <h1 className="text-xl font-bold">Quarven Scheduler</h1>
+            <h1 className="text-2xl font-light tracking-tight">Quarven Scheduler</h1>
             <div className="flex flex-wrap items-center gap-2">
               {result && (
                 <>
                   <button
                     onClick={handleExportSchedule}
-                    className="px-3 py-1.5 text-sm bg-white/10 hover:bg-white/20 rounded-md transition-colors"
+                    className="px-4 py-2 text-sm font-light bg-white/10 hover:bg-white/20 rounded-full transition-all duration-200"
                   >
                     Export CSV
                   </button>
                   <button
                     onClick={handleExportProblems}
-                    className="px-3 py-1.5 text-sm bg-white/10 hover:bg-white/20 rounded-md transition-colors"
+                    className="px-4 py-2 text-sm font-light bg-white/10 hover:bg-white/20 rounded-full transition-all duration-200"
                   >
                     Export Problems
                   </button>
                   <button
                     onClick={handleExportReport}
-                    className="px-3 py-1.5 text-sm bg-white/10 hover:bg-white/20 rounded-md transition-colors"
+                    className="px-4 py-2 text-sm font-light bg-white/10 hover:bg-white/20 rounded-full transition-all duration-200"
                   >
                     Export Report
                   </button>
@@ -182,8 +183,8 @@ export default function App() {
         </div>
       </header>
 
-      <main className="w-full px-4 sm:px-6 lg:px-8 py-6">
-        <div className="mb-6">
+      <main className="w-full px-6 sm:px-8 lg:px-10 py-8">
+        <div className="mb-8">
           <FileUploader
             onFilesSelected={handleFilesSelected}
             onLoadSample={handleLoadSample}
@@ -195,12 +196,12 @@ export default function App() {
         </div>
 
         {error && (
-          <div className="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-700">
+          <div className="mb-8 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-600 font-light">
             {error}
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)] gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-[240px_minmax(0,1fr)] gap-8">
           <aside className="hidden lg:block">
             <Navigation active={activeView} onChange={setActiveView} />
           </aside>

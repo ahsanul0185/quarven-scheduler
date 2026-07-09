@@ -20,20 +20,20 @@ export default function Breaks({ assignments, employees }: BreaksProps) {
   const sortedEmployeeIds = Array.from(byEmployee.keys()).sort()
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-      <div className="p-4 border-b border-slate-200">
-        <h3 className="text-lg font-semibold text-slate-800">Breaks</h3>
-        <p className="text-sm text-slate-500">Each person's automatic break times.</p>
+    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+      <div className="p-6 border-b border-slate-200">
+        <h3 className="text-lg text-slate-700">Breaks</h3>
+        <p className="text-sm font-light text-slate-400 mt-1">Each person's automatic break times.</p>
       </div>
       <div className="overflow-auto max-h-[calc(100vh-120px)]">
         <table className="w-full text-sm border-collapse">
-          <thead className="sticky top-0 z-20 shadow-sm">
-            <tr className="bg-[#0f172a] text-white">
-              <th className="px-4 py-3 text-left font-medium">Employee</th>
-              <th className="px-4 py-3 text-left font-medium">Day</th>
-              <th className="px-4 py-3 text-left font-medium">Shift</th>
-              <th className="px-4 py-3 text-left font-medium">Break</th>
-              <th className="px-4 py-3 text-left font-medium">Duration</th>
+          <thead className="sticky top-0 z-20">
+            <tr className="bg-[#2C3E50] text-white">
+              <th className="px-6 py-4 text-left font-light">Employee</th>
+              <th className="px-6 py-4 text-left font-light">Day</th>
+              <th className="px-6 py-4 text-left font-light">Shift</th>
+              <th className="px-6 py-4 text-left font-light">Break</th>
+              <th className="px-6 py-4 text-left font-light">Duration</th>
             </tr>
           </thead>
           <tbody>
@@ -52,19 +52,19 @@ export default function Breaks({ assignments, employees }: BreaksProps) {
                 return (
                   <tr
                     key={`${empId}-${a.assignment_id}`}
-                    className={rowIndex % 2 === 1 ? 'bg-[#F2F2F2]' : 'bg-white'}
+                    className={`${rowIndex % 2 === 1 ? 'bg-[#f2f4f6]' : 'bg-white'} transition-colors hover:bg-slate-50`}
                   >
-                    <td className="px-4 py-3 font-medium text-slate-800">
+                    <td className="px-6 py-4 font-light text-slate-700">
                       {emp?.employee_name || empId}
                     </td>
-                    <td className="px-4 py-3 text-slate-700 capitalize">{a.day}</td>
-                    <td className="px-4 py-3 text-slate-700">
+                    <td className="px-6 py-4 text-slate-600 font-light capitalize">{a.day}</td>
+                    <td className="px-6 py-4 text-slate-600 font-light">
                       {a.start_time}–{a.end_time}
                     </td>
-                    <td className="px-4 py-3 text-slate-700">
+                    <td className="px-6 py-4 text-slate-600 font-light">
                       {breakStart && breakEnd ? `${breakStart}–${breakEnd}` : '-'}
                     </td>
-                    <td className="px-4 py-3 text-slate-700">{a.break_minutes} min</td>
+                    <td className="px-6 py-4 text-slate-600 font-light">{a.break_minutes} min</td>
                   </tr>
                 )
               })

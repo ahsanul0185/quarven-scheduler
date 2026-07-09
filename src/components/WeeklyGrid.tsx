@@ -9,9 +9,9 @@ interface WeeklyGridProps {
 }
 
 const ROLE_COLORS: Record<string, string> = {
-  cleaning: 'bg-blue-100 text-blue-900 border-blue-300',
-  security: 'bg-amber-100 text-amber-900 border-amber-300',
-  maintenance: 'bg-emerald-100 text-emerald-900 border-emerald-300',
+  cleaning: 'bg-[#ebf5fb] text-[#2980b9] border-[#aed6f1]',
+  security: 'bg-[#fef9e7] text-[#b7950b] border-[#f9e79f]',
+  maintenance: 'bg-[#eafaf1] text-[#239b56] border-[#a9dfbf]',
 }
 
 export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) {
@@ -33,24 +33,24 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
   }
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden flex flex-col">
-      <div className="p-4 border-b border-slate-200 shrink-0">
-        <h3 className="text-lg font-semibold text-slate-800">Weekly Schedule Grid</h3>
-        <p className="text-sm text-slate-500">
+    <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden flex flex-col">
+      <div className="p-6 border-b border-slate-200 shrink-0">
+        <h3 className="text-lg text-slate-700">Weekly Schedule Grid</h3>
+        <p className="text-sm font-light text-slate-400 mt-1">
           Employees × days. Each block shows task, floor, time, and break.
         </p>
       </div>
       <div className="overflow-auto h-[calc(100vh-120px)]">
         <table className="w-full text-sm border-collapse">
           <thead className="sticky top-0 z-20">
-            <tr className="bg-[#0f172a] text-white">
-              <th className="px-4 py-3 text-left font-medium sticky left-0 bg-[#0f172a] z-30 min-w-[160px] border-r border-slate-600">
+            <tr className="bg-[#2C3E50] text-white">
+              <th className="px-6 py-4 text-left font-light sticky left-0 bg-[#2C3E50] z-30 min-w-[180px] border-r border-slate-600">
                 Employee
               </th>
               {DAYS_OF_WEEK.map((day) => (
                 <th
                   key={day}
-                  className="px-3 py-3 text-center font-medium min-w-[150px] bg-[#0f172a]"
+                  className="px-4 py-4 text-center font-light min-w-[150px] bg-[#2C3E50]"
                 >
                   {DAY_LABELS[day]}
                 </th>
@@ -60,15 +60,15 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
           <tbody>
             {employees.map((emp, rowIndex) => {
               const empAssignments = grid.get(emp.employee_id)!
-              const rowBg = rowIndex % 2 === 1 ? 'bg-[#F2F2F2]' : 'bg-white'
+              const rowBg = rowIndex % 2 === 1 ? 'bg-[#f2f4f6]' : 'bg-white'
 
               return (
-                <tr key={emp.employee_id} className={rowBg}>
+                <tr key={emp.employee_id} className={`${rowBg} transition-colors hover:bg-slate-50`}>
                   <td
-                    className={`px-4 py-3 font-medium text-slate-800 sticky left-0 z-10 border-r border-slate-200 min-w-[160px] ${rowBg}`}
+                    className={`px-6 py-4 font-light text-slate-700 sticky left-0 z-10 border-r border-slate-200 min-w-[180px] ${rowBg}`}
                   >
                     {emp.employee_name}
-                    <div className="text-xs text-slate-500 font-normal capitalize">
+                    <div className="text-xs font-light text-slate-400 capitalize">
                       {emp.role} • {emp.site}
                     </div>
                   </td>
@@ -83,10 +83,10 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
                     }
 
                     return (
-                      <td key={day} className="px-2 py-2 align-top min-w-[150px]">
+                      <td key={day} className="px-3 py-3 align-top min-w-[150px]">
                         {Array.from(byShift.entries()).map(([shiftId, shiftAssignments]) => {
                           const roleClass =
-                            ROLE_COLORS[emp.role] || 'bg-slate-100 text-slate-800 border-slate-300'
+                            ROLE_COLORS[emp.role] || 'bg-[#f2f4f6] text-slate-600 border-slate-200'
                           const tasks = shiftAssignments.map((a) => a.task_name).join(', ')
                           const floors = [...new Set(shiftAssignments.map((a) => a.floor))].join(', ')
                           const a = shiftAssignments[0]
@@ -96,14 +96,14 @@ export default function WeeklyGrid({ employees, assignments }: WeeklyGridProps) 
                           return (
                             <div
                               key={shiftId}
-                              className={`mb-1.5 rounded border p-2 text-xs ${roleClass}`}
+                              className={`mb-2 rounded-xl border p-3 text-xs font-light ${roleClass}`}
                             >
-                              <div className="font-semibold truncate">{tasks}</div>
-                              <div className="truncate">{floors}</div>
-                              <div className="text-[11px] opacity-90">
+                              <div className="font-normal truncate">{tasks}</div>
+                              <div className="truncate opacity-80">{floors}</div>
+                              <div className="text-[11px] opacity-70">
                                 {a.start_time}–{a.end_time}
                               </div>
-                              <div className="text-[11px] opacity-90">{breakText}</div>
+                              <div className="text-[11px] opacity-70">{breakText}</div>
                             </div>
                           )
                         })}

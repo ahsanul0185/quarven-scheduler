@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  --color-quarven-header: #0f172a;
-  --color-quarven-row-even: #f8fafc;
+  --color-quarven-header: #2C3E50;
+  --color-quarven-row-even: #f2f4f6;
+  --color-accent: #3498db;
+  --color-accent-soft: #ebf5fb;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background-color: #f1f5f9;
-  color: #0f172a;
+  background-color: #eef2f5;
+  color: #1a252f;
   font-family: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
